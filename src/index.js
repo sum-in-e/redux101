@@ -4,6 +4,9 @@ const plus = document.getElementById("plus");
 const minus = document.getElementById("minus");
 const number = document.querySelector("span");
 
+const PLUS = "PLUS";
+const MINUS = "MINUS";
+
 /**
  * @remarks
  * reducer는 함수이며, 데이터를 수정한다.
@@ -12,12 +15,13 @@ const number = document.querySelector("span");
  */
 const countReducer = (count = 0, action) => {
   // action을 전달 받아 어떤 수정을 할지 판단한다.
-  if (action.type === "PLUS") {
-    return count + 1;
-  } else if (action.type === "MINUS") {
-    return count - 1;
-  } else {
-    return count;
+  switch (action.type) {
+    case PLUS:
+      return count + 1;
+    case MINUS:
+      return count - 1;
+    default:
+      return count;
   }
 };
 
@@ -42,11 +46,11 @@ countStore.subscribe(handleChange);
  * 변화를 일으키기 위해 dispatch로 reducer에 action을 전달한다.
  */
 const handlePlus = () => {
-  countStore.dispatch({ type: "PLUS" });
+  countStore.dispatch({ type: PLUS });
 };
 
 const handleMinus = () => {
-  countStore.dispatch({ type: "MINUS" });
+  countStore.dispatch({ type: MINUS });
 };
 
 plus.addEventListener("click", handlePlus);
