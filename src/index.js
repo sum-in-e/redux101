@@ -1,57 +1,69 @@
 import { createStore } from "redux";
 
-const plus = document.getElementById("plus");
-const minus = document.getElementById("minus");
-const number = document.querySelector("span");
+const form = document.querySelector("form");
+const input = document.querySelector("input");
+const ul = document.querySelector("ul");
 
-const PLUS = "PLUS";
-const MINUS = "MINUS";
+const ADD = "ADD";
+const DELETE = "DELETE";
 
-/**
- * @remarks
- * reducer는 함수이며, 데이터를 수정한다.
- *
- * @returns 수정한 데이터
- */
-const countReducer = (count = 0, action) => {
-  // action을 전달 받아 어떤 수정을 할지 판단한다.
+// 액션을 리턴하는 액션함수(액션만을 리턴)를 생성하여 dispatch에 인자로 전달. 주로 리듀서 위에 배치한다.
+const deleteToDoAction = (id) => {
+  return { type: DELETE, id };
+};
+
+const addToDoAction = (text) => {
+  return { type: ADD, text };
+};
+
+const toDoReducer = (state = [], action) => {
   switch (action.type) {
-    case PLUS:
-      return count + 1;
-    case MINUS:
-      return count - 1;
+    case ADD:
+      const newToDo = { id: Date.now(), text: action.text };
+      return [newToDo, ...state];
+    case DELETE:
+      const newToDos = state.filter((toDo) => toDo.id !== Number(action.id));
+      return newToDos;
     default:
-      return count;
+      return state;
   }
 };
 
-/**
- * @remarks
- * createStore로 store를 생성한다.
- */
-const countStore = createStore(countReducer);
+const toDoStore = createStore(toDoReducer);
 
-const handleChange = () => {
-  number.innerText = countStore.getState();
+const dispatchDeleteToDo = (e) => {
+  const id = e.target.parentNode.id;
+  toDoStore.dispatch(deleteToDoAction(id));
 };
 
-/**
- * @remarks
- * subscribe로 store의 변화를 구독한다. 변화가 일어날 때마다 인자로 전달한 함수가 실행 된다.
- */
-countStore.subscribe(handleChange);
+const paintToDos = () => {
+  const toDos = toDoStore.getState();
+  ul.innerHTML = "";
+  toDos.forEach((toDo) => {
+    const li = document.createElement("li");
+    const button = document.createElement("button");
+    button.addEventListener("click", dispatchDeleteToDo);
 
-/**
- * @remarks
- * 변화를 일으키기 위해 dispatch로 reducer에 action을 전달한다.
- */
-const handlePlus = () => {
-  countStore.dispatch({ type: PLUS });
+    button.innerText = "DEL";
+    li.id = toDo.id;
+    li.innerText = toDo.text;
+    li.appendChild(button);
+    ul.appendChild(li);
+  });
 };
 
-const handleMinus = () => {
-  countStore.dispatch({ type: MINUS });
+// 하나의 함수가 하나의 작업을 수행하도록 최적화했다. 함수가 하는 일을 직관적으로 알 수 있도록 네이밍 하자.
+const dispatchAddToDo = (text) => {
+  toDoStore.dispatch(addToDoAction(text));
 };
 
-plus.addEventListener("click", handlePlus);
-minus.addEventListener("click", handleMinus);
+const handleSubmitToDo = (e) => {
+  e.preventDefault();
+  const toDo = input.value;
+  input.value = "";
+  dispatchAddToDo(toDo);
+};
+
+toDoStore.subscribe(paintToDos);
+
+form.addEventListener("submit", handleSubmitToDo);
