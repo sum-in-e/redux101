@@ -27,7 +27,7 @@ function mapDisptchToProps(dispatch, ownProps) {
   return {
     // deleteToDo 액션으로 dispatch하는 함수를 만들어서 return
     // Home에서와 달리 ownProps로 id를 가져올 수 있기 때문에 deleteToDo 실행 시 id를 인자로 전달할 필요가 없다.
-    // 그래서 애초에 click시 deleteToDo하는 함수를 만들어서 return하여 그걸 그대로 onClick 시 사용하도록 하면 됨.
+    // 애초에 click시 deleteToDo하는 함수를 만들어서 return하여 그대로 onClick 시 사용.
     handleClickDelete: () =>
       dispatch(actionCreators.deleteToDoAction(ownProps.id)),
   };
