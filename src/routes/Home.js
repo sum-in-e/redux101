@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import ToDo from "../components/Todo";
-import { actionCreators } from "../store";
+import { addToDo } from "../store";
 
 function Home({ toDos, addToDo }) {
   const [text, setText] = useState("");
@@ -32,33 +32,14 @@ function Home({ toDos, addToDo }) {
   );
 }
 
-/**
- * @remarks
- * Home 컴포넌트에 전달할 dispatch props를 return하는 함수
- *
- * @param state - 현재 store의 state
- * @param ownProps - 현재 컴포넌트가 받는 props
- *
- * @returns state
- */
-function mapDisptchToProps(dispatch, ownProps) {
-  return {
-    // addToDo 액션으로 dispatch하는 함수를 만들어서 return
-    addToDo: (text) => dispatch(actionCreators.addToDoAction(text)),
-  };
-}
-
-/**
- * @remarks
- * Home 컴포넌트에 전달할 state props를 return하는 함수
- *
- * @param state - 현재 store의 state
- * @param ownProps - 현재 컴포넌트가 받는 props
- *
- * @returns state
- */
 function mapStateToProps(state) {
   return { toDos: state };
+}
+
+function mapDisptchToProps(dispatch) {
+  return {
+    addToDo: (text) => dispatch(addToDo(text)),
+  };
 }
 
 // connect를 이용해 mapStateToProps와 mapDisptchToProps에서 return하는 것을 Home 컴포넌트에 props로 전달한다.

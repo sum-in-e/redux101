@@ -1,46 +1,21 @@
-import { createStore } from "redux";
+import { configureStore, createSlice } from "@reduxjs/toolkit";
 
-const ADD = "ADD";
-const DELETE = "DELETE";
+const toDos = createSlice({
+  name: "toDosReducer",
+  initialState: [],
+  reducers: {
+    addToDo: (state, action) => {
+      // 1. state를 mutate
+      state.push({ text: action.payload, id: Date.now() });
+    },
+    deleteToDo: (state, action) =>
+      // 2. new state를 return
+      state.filter((todo) => todo.id !== Number(action.payload)),
+  },
+});
+console.log(toDos);
+export const { addToDo, deleteToDo } = toDos.actions; // actions
 
-/**
- * @remarks
- * 할 일을 추가하는 액션 함수
- *
- * @returns action
- */
-const addToDoAction = (text) => {
-  return { type: ADD, text };
-};
-
-/**
- * @remarks
- * 할 일을 제거하는 액션 함수
- *
- * @returns action
- */
-const deleteToDoAction = (id) => {
-  return { type: DELETE, id };
-};
-
-const reducer = (state = [], action) => {
-  switch (action.type) {
-    case ADD:
-      const newToDo = { text: action.text, id: Date.now() };
-      return [newToDo, ...state];
-    case DELETE:
-      const newToDos = state.filter((toDo) => toDo.id !== Number(action.id));
-      return newToDos;
-    default:
-      return state;
-  }
-};
-
-const store = createStore(reducer);
-
-export const actionCreators = {
-  addToDoAction,
-  deleteToDoAction,
-};
+const store = configureStore({ reducer: toDos.reducer });
 
 export default store;
